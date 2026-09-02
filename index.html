@@ -1,9 +1,7 @@
 <!-- =========================================================
      LATA-ZO
      SISTEMA DE CONTROL DE INVENTARIO
-     
      ARCHIVO: index.html
-     Aquí está toda la estructura visual de la aplicación.
 ========================================================= -->
 
 <!DOCTYPE html>
@@ -37,8 +35,11 @@
     <header class="header">
 
         <div class="logo">
+
             <span>LATA-ZO</span>
+
             <small>CONTROL DE INVENTARIO</small>
+
         </div>
 
         <div class="header-icon">
@@ -96,11 +97,15 @@
                 </span>
 
                 <div>
-                    <small>PRODUCTOS</small>
+
+                    <small>
+                        PRODUCTOS
+                    </small>
 
                     <strong id="totalProducts">
                         0
                     </strong>
+
                 </div>
 
             </div>
@@ -115,11 +120,15 @@
                 </span>
 
                 <div>
-                    <small>EN STOCK</small>
+
+                    <small>
+                        EN STOCK
+                    </small>
 
                     <strong id="totalStock">
                         0
                     </strong>
+
                 </div>
 
             </div>
@@ -134,11 +143,15 @@
                 </span>
 
                 <div>
-                    <small>STOCK BAJO</small>
+
+                    <small>
+                        STOCK BAJO
+                    </small>
 
                     <strong id="lowStock">
                         0
                     </strong>
+
                 </div>
 
             </div>
@@ -153,11 +166,15 @@
                 </span>
 
                 <div>
-                    <small>VALOR</small>
+
+                    <small>
+                        VALOR
+                    </small>
 
                     <strong id="totalValue">
                         $0
                     </strong>
+
                 </div>
 
             </div>
@@ -171,12 +188,16 @@
 
         <section class="quick-actions">
 
+
             <button
                 class="action-button blue-button"
                 onclick="show('products')">
 
                 📦
-                <span>PRODUCTOS</span>
+
+                <span>
+                    PRODUCTOS
+                </span>
 
             </button>
 
@@ -186,7 +207,10 @@
                 onclick="show('entry')">
 
                 ➕
-                <span>ENTRADA</span>
+
+                <span>
+                    ENTRADA
+                </span>
 
             </button>
 
@@ -196,7 +220,10 @@
                 onclick="show('exit')">
 
                 ➖
-                <span>SALIDA</span>
+
+                <span>
+                    SALIDA
+                </span>
 
             </button>
 
@@ -206,9 +233,13 @@
                 onclick="show('low')">
 
                 ⚠️
-                <span>STOCK BAJO</span>
+
+                <span>
+                    STOCK BAJO
+                </span>
 
             </button>
+
 
         </section>
 
@@ -221,15 +252,21 @@
             id="productsSection"
             class="section-card">
 
+
             <div class="section-title">
 
                 <div>
-                    <h2>📦 Mis productos</h2>
+
+                    <h2>
+                        📦 Mis productos
+                    </h2>
 
                     <p>
                         Administra tus productos y existencias.
                     </p>
+
                 </div>
+
 
                 <button
                     class="add-button"
@@ -247,6 +284,7 @@
             ================================================== -->
 
             <div class="filters">
+
 
                 <input
                     type="text"
@@ -277,6 +315,7 @@
 
                 </select>
 
+
             </div>
 
 
@@ -292,6 +331,7 @@
 
             </div>
 
+
         </section>
 
 
@@ -302,6 +342,7 @@
         <section
             id="lowSection"
             class="section-card">
+
 
             <div class="section-title">
 
@@ -328,6 +369,7 @@
 
             </div>
 
+
         </section>
 
 
@@ -338,6 +380,7 @@
         <section
             id="historySection"
             class="section-card">
+
 
             <div class="section-title">
 
@@ -364,6 +407,7 @@
 
             </div>
 
+
         </section>
 
 
@@ -376,11 +420,15 @@
 
     <nav class="bottom-menu">
 
+
         <button
             onclick="show('products')">
 
             📦
-            <span>Productos</span>
+
+            <span>
+                Productos
+            </span>
 
         </button>
 
@@ -389,7 +437,10 @@
             onclick="show('entry')">
 
             ➕
-            <span>Entrada</span>
+
+            <span>
+                Entrada
+            </span>
 
         </button>
 
@@ -398,7 +449,10 @@
             onclick="show('exit')">
 
             ➖
-            <span>Salida</span>
+
+            <span>
+                Salida
+            </span>
 
         </button>
 
@@ -407,9 +461,13 @@
             onclick="show('history')">
 
             🕘
-            <span>Historial</span>
+
+            <span>
+                Historial
+            </span>
 
         </button>
+
 
     </nav>
 
@@ -422,6 +480,7 @@
         id="productModal"
         class="modal">
 
+
         <div class="modal-content">
 
 
@@ -431,7 +490,9 @@
                     Agregar producto
                 </h2>
 
+
                 <button
+                    type="button"
                     onclick="closeModal('productModal')">
 
                     ✕
@@ -541,9 +602,12 @@
 
                 </button>
 
+
             </form>
 
+
         </div>
+
 
     </div>
 
@@ -556,21 +620,26 @@
         id="movementModal"
         class="modal">
 
+
         <div class="modal-content">
 
 
             <div class="modal-header">
 
+
                 <h2 id="movementTitle">
                     Entrada de inventario
                 </h2>
 
+
                 <button
+                    type="button"
                     onclick="closeModal('movementModal')">
 
                     ✕
 
                 </button>
+
 
             </div>
 
@@ -633,18 +702,29 @@
 
                 </button>
 
+
             </form>
 
+
         </div>
+
 
     </div>
 
 
     <!-- =====================================================
-         15. CONECTAR JAVASCRIPT
+         15. CONECTAR SUPABASE
+    ====================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <!-- =====================================================
+         16. CONECTAR JAVASCRIPT
     ====================================================== -->
 
     <script src="app.js"></script>
+
 
 </body>
 
