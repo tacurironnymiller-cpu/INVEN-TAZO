@@ -1487,95 +1487,71 @@ document
 
 function show(section) {
 
-
     /* ---------- PRODUCTOS ---------- */
 
-    if (
-        section === "products"
-    ) {
+    if (section === "products") {
 
-        document
-            .getElementById(
-                "productsSection"
-            )
-            .scrollIntoView({
-                behavior: "smooth"
-            });
+        const element =
+            document.getElementById("productsSection");
+
+        if (element) {
+            element.scrollIntoView();
+        }
 
         return;
-
     }
 
 
     /* ---------- STOCK BAJO ---------- */
 
-    if (
-        section === "low"
-    ) {
+    if (section === "low") {
 
-        document
-            .getElementById(
-                "lowSection"
-            )
-            .scrollIntoView({
-                behavior: "smooth"
-            });
+        const element =
+            document.getElementById("lowSection");
+
+        if (element) {
+            element.scrollIntoView();
+        }
 
         return;
-
     }
 
 
     /* ---------- HISTORIAL ---------- */
 
-    if (
-        section === "history"
-    ) {
+    if (section === "history") {
 
-        document
-            .getElementById(
-                "historySection"
-            )
-            .scrollIntoView({
-                behavior: "smooth"
-            });
+        const element =
+            document.getElementById("historySection");
+
+        if (element) {
+            element.scrollIntoView();
+        }
 
         return;
-
     }
 
 
     /* ---------- ENTRADA ---------- */
 
-    if (
-        section === "entry"
-    ) {
+    if (section === "entry") {
 
-        openMovementModal(
-            "entry"
-        );
+        openMovementModal("entry");
 
         return;
-
     }
 
 
     /* ---------- SALIDA ---------- */
 
-    if (
-        section === "exit"
-    ) {
+    if (section === "exit") {
 
-        openMovementModal(
-            "exit"
-        );
+        openMovementModal("exit");
 
         return;
-
     }
 
 }
-
 
 /* =========================================================
    28. CERRAR MODAL AL HACER CLIC AFUERA
