@@ -1,12 +1,7 @@
 /* =========================================================
    LATA-ZO
    SISTEMA DE CONTROL DE INVENTARIO
-
    ARCHIVO: app.js
-
-   Aquí está toda la lógica de la aplicación.
-   Está separado por comentarios para que sea fácil
-   modificar cada parte después.
 ========================================================= */
 
 
@@ -15,205 +10,310 @@
 ========================================================= */
 
 const STORAGE_KEY = "latazo_inventario_v2";
-
 const DEFAULT_MIN_STOCK = 5;
 
+const SUPABASE_URL =
+    "https://lkiohnjtpltmbxjjfugv.supabase.co";
 
-/* =========================================================
-   2. PRODUCTOS DE EJEMPLO
-========================================================= */
+const SUPABASE_KEY =
+    "sb_publishable_YSo0l7Hioa6y2UWsFgsnmg_ZxB5FNd1"
 
-const demoProducts = [
 
-    {
-        id: 1,
-        name: "Granizado de mora",
-        category: "Granizado",
-        stock: 12,
-        minStock: 5,
-        price: 2.50
-    },
-
-    {
-        id: 2,
-        name: "Granizado de fresa",
-        category: "Granizado",
-        stock: 8,
-        minStock: 5,
-        price: 2.50
-    },
-
-    {
-        id: 3,
-        name: "Granizado de mango",
-        category: "Granizado",
-        stock: 4,
-        minStock: 5,
-        price: 2.50
-    },
-
-    {
-        id: 4,
-        name: "Helado de vainilla",
-        category: "Helado",
-        stock: 10,
-        minStock: 5,
-        price: 1.50
-    },
-
-    {
-        id: 5,
-        name: "Helado de chocolate",
-        category: "Helado",
-        stock: 3,
-        minStock: 5,
-        price: 1.50
-    },
-
-    {
-        id: 6,
-        name: "Jarabe de mora",
-        category: "Insumo",
-        stock: 2,
-        minStock: 3,
-        price: 4.00
-    },
-
-    {
-        id: 7,
-        name: "Vasos grandes",
-        category: "Insumo",
-        stock: 50,
-        minStock: 15,
-        price: 0.15
-    }
-
-];
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
 /* =========================================================
-   3. DATOS PRINCIPALES
+   2. DATOS PRINCIPALES
 ========================================================= */
 
 let data = {
-
     products: [],
-
     movements: []
-
 };
 
 
 /* =========================================================
-   4. CARGAR DATOS
+   3. CARGAR DATOS DESDE SUPABASE
 ========================================================= */
 
-function loadData() {
+async function loadData() {
 
-    const saved =
-        localStorage.getItem(STORAGE_KEY);
+    console.log("Cargando datos desde Supabase...");
 
 
-    if (saved) {
+    /* ---------- PRODUCTOS ---------- */
 
-        try {
+    const {
+        data: products,
+        error: productsError
+    } = await supabaseClient
+        .from("products")
+        .select("*")
+        .order("id", {
+            ascending: true
+        });
 
-            data = JSON.parse(saved);
 
-        }
+    if (productsError) {
 
-        catch (error) {
+        console.error(
+            "Error cargando productos:",
+            productsError
+        );
 
-            console.log(
-                "Error cargando los datos."
-            );
+        alert(
+            "No se pudieron cargar los productos."
+        );
 
-            createDemoData();
-
-        }
-
+        return;
     }
 
-    else {
 
-        createDemoData();
+    /* ---------- MOVIMIENTOS ---------- */
 
+    const {
+        data: movements,
+        error: movementsError
+    } = await supabaseClient
+        .from("movements")
+        .select("*")
+        .order("id", {
+            ascending: true
+        });
+
+
+    if (movementsError) {
+
+        console.error(
+            "Error cargando movimientos:",
+            movementsError
+        );
+
+        alert(
+            "No se pudieron cargar los movimientos."
+        );
+
+        return;
     }
 
-}
+
+    /* =====================================================
+       CONVERTIR LOS NOMBRES DE SUPABASE
+       A LOS NOMBRES QUE USA LATA-ZO
+    ===================================================== */
+
+    data.products =
+        (products || []).map(product => ({
+
+            id:
+                Number(product.id),
+
+            name:
+                product.name,
+
+            category:
+                product.category,
+
+            stock:
+                Number(product.stock),
+
+            minStock:
+                Number(product.min_stock),
+
+            price:
+                Number(product.price)
+
+        }));
 
 
-/* =========================================================
-   5. CREAR DATOS DE EJEMPLO
-========================================================= */
+    data.movements =
+        (movements || []).map(movement => ({
 
-function createDemoData() {
+            id:
+                Number(movement.id),
 
-    data = {
+            productId:
+                Number(movement.product_id),
 
-        products: demoProducts.map(product => ({
-            ...product
-        })),
+            type:
+                movement.type,
 
-        movements: [
+            quantity:
+                Number(movement.quantity),
 
-            {
-                id: 1,
-                productId: 1,
-                type: "entry",
-                quantity: 12,
-                reason: "Inventario inicial",
-                date: new Date().toISOString()
-            },
+            reason:
+                movement.reason,
 
-            {
-                id: 2,
-                productId: 2,
-                type: "entry",
-                quantity: 8,
-                reason: "Inventario inicial",
-                date: new Date().toISOString()
-            }
+            date:
+                movement.date
 
-        ]
-
-    };
+        }));
 
 
-    saveData();
-
-}
-
-
-/* =========================================================
-   6. GUARDAR DATOS
-========================================================= */
-
-function saveData() {
-
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(data)
+    console.log(
+        "Productos cargados:",
+        data.products
     );
 
+
+    console.log(
+        "Movimientos cargados:",
+        data.movements
+    );
+
+
+    render();
 }
 
 
 /* =========================================================
-   7. FUNCIONES GENERALES
+   4. GUARDAR DATOS EN SUPABASE
 ========================================================= */
 
+async function saveData() {
 
-/* ---------- FORMATO DE DINERO ---------- */
+
+    /* =====================================================
+       PRODUCTOS
+    ===================================================== */
+
+    const productsToSave =
+        data.products.map(product => ({
+
+            id:
+                Number(product.id),
+
+            name:
+                product.name,
+
+            category:
+                product.category,
+
+            stock:
+                Number(product.stock),
+
+            min_stock:
+                Number(product.minStock),
+
+            price:
+                Number(product.price)
+
+        }));
+
+
+    const {
+        error: productsError
+    } = await supabaseClient
+        .from("products")
+        .upsert(
+            productsToSave,
+            {
+                onConflict: "id"
+            }
+        );
+
+
+    if (productsError) {
+
+        console.error(
+            "Error guardando productos:",
+            productsError
+        );
+
+        alert(
+            "No se pudo guardar el producto."
+        );
+
+        return false;
+    }
+
+
+    /* =====================================================
+       MOVIMIENTOS
+    ===================================================== */
+
+    if (data.movements.length > 0) {
+
+
+        const movementsToSave =
+            data.movements.map(movement => ({
+
+                id:
+                    Number(movement.id),
+
+                product_id:
+                    Number(movement.productId),
+
+                type:
+                    movement.type,
+
+                quantity:
+                    Number(movement.quantity),
+
+                reason:
+                    movement.reason || null,
+
+                date:
+                    movement.date
+
+            }));
+
+
+        const {
+            error: movementsError
+        } = await supabaseClient
+            .from("movements")
+            .upsert(
+                movementsToSave,
+                {
+                    onConflict: "id"
+                }
+            );
+
+
+        if (movementsError) {
+
+            console.error(
+                "Error guardando movimientos:",
+                movementsError
+            );
+
+            alert(
+                "No se pudo guardar el movimiento."
+            );
+
+            return false;
+        }
+    }
+
+
+    console.log(
+        "Datos guardados correctamente."
+    );
+
+    return true;
+}
+
+
+/* =========================================================
+   5. DINERO
+========================================================= */
 
 function money(value) {
 
-    return "$" + Number(value).toFixed(2);
+    return "$" +
+        Number(value).toFixed(2);
 
 }
 
 
-/* ---------- BUSCAR PRODUCTO ---------- */
+/* =========================================================
+   6. BUSCAR PRODUCTO
+========================================================= */
 
 function findProduct(id) {
 
@@ -225,21 +325,38 @@ function findProduct(id) {
 }
 
 
-/* ---------- PROTEGER TEXTO HTML ---------- */
+/* =========================================================
+   7. PROTEGER TEXTO HTML
+========================================================= */
 
 function escapeHTML(text) {
 
     return String(text)
 
-        .replaceAll("&", "&amp;")
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
 
-        .replaceAll("<", "&lt;")
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
 
-        .replaceAll(">", "&gt;")
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
 
-        .replaceAll('"', "&quot;")
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
 
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
@@ -251,29 +368,29 @@ function escapeHTML(text) {
 function renderSummary() {
 
 
-    /* ---------- TOTAL DE PRODUCTOS ---------- */
+    /* ---------- TOTAL PRODUCTOS ---------- */
 
     const totalProducts =
         data.products.length;
 
 
-    /* ---------- TOTAL DE UNIDADES ---------- */
+    /* ---------- TOTAL STOCK ---------- */
 
     const totalStock =
         data.products.reduce(
             (total, product) =>
-                total + Number(product.stock),
+                total +
+                Number(product.stock),
             0
         );
 
 
-    /* ---------- PRODUCTOS CON STOCK BAJO ---------- */
+    /* ---------- STOCK BAJO ---------- */
 
     const lowStock =
         data.products.filter(
             product =>
-                Number(product.stock)
-                <=
+                Number(product.stock) <=
                 Number(product.minStock)
         ).length;
 
@@ -284,36 +401,58 @@ function renderSummary() {
         data.products.reduce(
             (total, product) =>
                 total +
-                Number(product.stock) *
-                Number(product.price),
+                (
+                    Number(product.stock) *
+                    Number(product.price)
+                ),
             0
         );
 
 
-    /* ---------- MOSTRAR RESULTADOS ---------- */
+    /* ---------- MOSTRAR ---------- */
 
-    document.getElementById(
-        "totalProducts"
-    ).textContent =
-        totalProducts;
+    const totalProductsElement =
+        document.getElementById(
+            "totalProducts"
+        );
 
-
-    document.getElementById(
-        "totalStock"
-    ).textContent =
-        totalStock;
-
-
-    document.getElementById(
-        "lowStock"
-    ).textContent =
-        lowStock;
+    if (totalProductsElement) {
+        totalProductsElement.textContent =
+            totalProducts;
+    }
 
 
-    document.getElementById(
-        "totalValue"
-    ).textContent =
-        money(totalValue);
+    const totalStockElement =
+        document.getElementById(
+            "totalStock"
+        );
+
+    if (totalStockElement) {
+        totalStockElement.textContent =
+            totalStock;
+    }
+
+
+    const lowStockElement =
+        document.getElementById(
+            "lowStock"
+        );
+
+    if (lowStockElement) {
+        lowStockElement.textContent =
+            lowStock;
+    }
+
+
+    const totalValueElement =
+        document.getElementById(
+            "totalValue"
+        );
+
+    if (totalValueElement) {
+        totalValueElement.textContent =
+            money(totalValue);
+    }
 
 }
 
@@ -331,54 +470,68 @@ function renderProducts() {
         );
 
 
+    if (!list) {
+        return;
+    }
+
+
     /* ---------- BUSCADOR ---------- */
 
-    const search =
+    const searchInput =
         document.getElementById(
             "searchInput"
-        )
-        .value
-        .toLowerCase()
-        .trim();
+        );
 
 
-    /* ---------- FILTRO DE CATEGORÍA ---------- */
+    const search =
+        searchInput
+            ? searchInput.value
+                .toLowerCase()
+                .trim()
+            : "";
 
-    const category =
+
+    /* ---------- CATEGORÍA ---------- */
+
+    const categoryFilter =
         document.getElementById(
             "categoryFilter"
-        )
-        .value;
+        );
 
 
-    /* ---------- FILTRAR PRODUCTOS ---------- */
+    const category =
+        categoryFilter
+            ? categoryFilter.value
+            : "all";
+
+
+    /* ---------- FILTRAR ---------- */
 
     const products =
-        data.products.filter(product => {
+        data.products.filter(
+            product => {
+
+                const matchesSearch =
+                    String(product.name)
+                        .toLowerCase()
+                        .includes(search);
 
 
-            const matchesSearch =
-                product.name
-                    .toLowerCase()
-                    .includes(search);
+                const matchesCategory =
+                    category === "all" ||
+                    product.category === category;
 
 
-            const matchesCategory =
-                category === "all"
-                ||
-                product.category === category;
+                return (
+                    matchesSearch &&
+                    matchesCategory
+                );
+
+            }
+        );
 
 
-            return (
-                matchesSearch
-                &&
-                matchesCategory
-            );
-
-        });
-
-
-    /* ---------- SI NO HAY PRODUCTOS ---------- */
+    /* ---------- SIN PRODUCTOS ---------- */
 
     if (!products.length) {
 
@@ -393,11 +546,10 @@ function renderProducts() {
         `;
 
         return;
-
     }
 
 
-    /* ---------- CREAR TARJETAS ---------- */
+    /* ---------- TARJETAS ---------- */
 
     list.innerHTML =
 
@@ -408,10 +560,8 @@ function renderProducts() {
                 "stock-ok";
 
 
-            /* STOCK AGOTADO */
-
             if (
-                product.stock <= 0
+                Number(product.stock) <= 0
             ) {
 
                 stockClass =
@@ -419,12 +569,9 @@ function renderProducts() {
 
             }
 
-
-            /* STOCK BAJO */
-
             else if (
-                product.stock <=
-                product.minStock
+                Number(product.stock) <=
+                Number(product.minStock)
             ) {
 
                 stockClass =
@@ -437,38 +584,26 @@ function renderProducts() {
 
                 <div class="product-card">
 
-
-                    <!-- INFORMACIÓN DEL PRODUCTO -->
-
                     <div class="product-info">
 
                         <h3>
-
                             ${escapeHTML(
                                 product.name
                             )}
-
                         </h3>
 
-
                         <div class="product-category">
-
                             ${escapeHTML(
                                 product.category
                             )}
-
                         </div>
 
-
-                        <div
-                            class="${stockClass}
-                            product-stock">
+                        <div class="${stockClass} product-stock">
 
                             Stock:
                             ${product.stock}
 
                         </div>
-
 
                         <div class="product-price">
 
@@ -483,17 +618,11 @@ function renderProducts() {
                     </div>
 
 
-                    <!-- BOTONES -->
-
                     <div class="product-actions">
 
-
                         <button
-                            class="small-button
-                            edit-button"
-                            onclick="editProduct(
-                                ${product.id}
-                            )">
+                            class="small-button edit-button"
+                            onclick="editProduct(${product.id})">
 
                             ✏️ Editar
 
@@ -501,19 +630,14 @@ function renderProducts() {
 
 
                         <button
-                            class="small-button
-                            delete-button"
-                            onclick="deleteProduct(
-                                ${product.id}
-                            )">
+                            class="small-button delete-button"
+                            onclick="deleteProduct(${product.id})">
 
                             🗑️ Eliminar
 
                         </button>
 
-
                     </div>
-
 
                 </div>
 
@@ -537,18 +661,18 @@ function renderLowStock() {
         );
 
 
-    /* ---------- BUSCAR PRODUCTOS CON STOCK BAJO ---------- */
+    if (!list) {
+        return;
+    }
+
 
     const lowProducts =
         data.products.filter(
             product =>
-                Number(product.stock)
-                <=
+                Number(product.stock) <=
                 Number(product.minStock)
         );
 
-
-    /* ---------- NO HAY STOCK BAJO ---------- */
 
     if (!lowProducts.length) {
 
@@ -568,18 +692,14 @@ function renderLowStock() {
         `;
 
         return;
-
     }
 
-
-    /* ---------- MOSTRAR STOCK BAJO ---------- */
 
     list.innerHTML =
 
         lowProducts.map(product => `
 
             <div class="low-item">
-
 
                 <div>
 
@@ -590,7 +710,6 @@ function renderLowStock() {
                         )}
 
                     </strong>
-
 
                     <div>
 
@@ -605,11 +724,9 @@ function renderLowStock() {
                 <strong>
 
                     ${product.stock}
-
                     unidades
 
                 </strong>
-
 
             </div>
 
@@ -619,7 +736,7 @@ function renderLowStock() {
 
 
 /* =========================================================
-   11. HISTORIAL DE MOVIMIENTOS
+   11. HISTORIAL
 ========================================================= */
 
 function renderHistory() {
@@ -631,7 +748,10 @@ function renderHistory() {
         );
 
 
-    /* ---------- ORDENAR MOVIMIENTOS ---------- */
+    if (!list) {
+        return;
+    }
+
 
     const movements =
 
@@ -639,15 +759,12 @@ function renderHistory() {
 
             .sort(
                 (a, b) =>
-                    new Date(b.date)
-                    -
+                    new Date(b.date) -
                     new Date(a.date)
             )
 
             .slice(0, 20);
 
-
-    /* ---------- SI NO HAY MOVIMIENTOS ---------- */
 
     if (!movements.length) {
 
@@ -662,111 +779,101 @@ function renderHistory() {
         `;
 
         return;
-
     }
 
 
-    /* ---------- MOSTRAR HISTORIAL ---------- */
-
     list.innerHTML =
 
-        movements.map(movement => {
+        movements.map(
+            movement => {
 
 
-            const product =
-                findProduct(
-                    movement.productId
-                );
+                const product =
+                    findProduct(
+                        movement.productId
+                    );
 
 
-            const isEntry =
-                movement.type === "entry";
+                const isEntry =
+                    movement.type === "entry";
 
 
-            const date =
-                new Date(
-                    movement.date
-                )
-                .toLocaleString(
-                    "es-EC"
-                );
+                const date =
+                    new Date(
+                        movement.date
+                    ).toLocaleString(
+                        "es-EC"
+                    );
 
 
-            return `
+                return `
 
-                <div class="history-item">
-
-
-                    <div>
-
-
-                        <strong>
-
-                            ${
-                                escapeHTML(
-                                    product
-                                        ? product.name
-                                        : "Producto eliminado"
-                                )
-                            }
-
-                        </strong>
-
+                    <div class="history-item">
 
                         <div>
 
-                            ${
-                                escapeHTML(
-                                    movement.reason
-                                    ||
-                                    "Sin motivo"
-                                )
-                            }
+                            <strong>
+
+                                ${
+                                    escapeHTML(
+                                        product
+                                            ? product.name
+                                            : "Producto eliminado"
+                                    )
+                                }
+
+                            </strong>
+
+
+                            <div>
+
+                                ${
+                                    escapeHTML(
+                                        movement.reason ||
+                                        "Sin motivo"
+                                    )
+                                }
+
+                            </div>
+
+
+                            <div class="history-date">
+
+                                ${date}
+
+                            </div>
 
                         </div>
 
 
-                        <div class="history-date">
-
-                            ${date}
-
-                        </div>
-
-
-                    </div>
-
-
-                    <div
-                        class="${
+                        <div class="${
                             isEntry
-                            ? "history-entry"
-                            : "history-exit"
+                                ? "history-entry"
+                                : "history-exit"
                         }">
 
+                            ${
+                                isEntry
+                                    ? "+"
+                                    : "-"
+                            }
 
-                        ${
-                            isEntry
-                            ? "+"
-                            : "-"
-                        }
+                            ${movement.quantity}
 
-                        ${movement.quantity}
-
+                        </div>
 
                     </div>
 
+                `;
 
-                </div>
-
-            `;
-
-        }).join("");
+            }
+        ).join("");
 
 }
 
 
 /* =========================================================
-   12. ACTUALIZAR TODA LA APLICACIÓN
+   12. ACTUALIZAR APLICACIÓN
 ========================================================= */
 
 function render() {
@@ -783,69 +890,83 @@ function render() {
 
 
 /* =========================================================
-   13. ABRIR MODALES
+   13. MODALES
 ========================================================= */
 
 function openModal(id) {
 
-    document
-        .getElementById(id)
-        .classList
-        .add("active");
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+
+        element.classList.add(
+            "active"
+        );
+
+    }
 
 }
 
-
-/* =========================================================
-   14. CERRAR MODALES
-========================================================= */
 
 function closeModal(id) {
 
-    document
-        .getElementById(id)
-        .classList
-        .remove("active");
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+
+        element.classList.remove(
+            "active"
+        );
+
+    }
 
 }
 
 
 /* =========================================================
-   15. AGREGAR PRODUCTO
+   14. ABRIR PRODUCTO
 ========================================================= */
 
 function openProductModal() {
 
 
-    /* ---------- LIMPIAR FORMULARIO ---------- */
-
-    document
-        .getElementById(
+    const form =
+        document.getElementById(
             "productForm"
-        )
-        .reset();
+        );
 
 
-    /* ---------- BORRAR ID ---------- */
+    if (form) {
+        form.reset();
+    }
 
-    document
-        .getElementById(
+
+    const productId =
+        document.getElementById(
             "productId"
-        )
-        .value = "";
+        );
 
 
-    /* ---------- CAMBIAR TÍTULO ---------- */
+    if (productId) {
+        productId.value = "";
+    }
 
-    document
-        .getElementById(
+
+    const title =
+        document.getElementById(
             "productModalTitle"
-        )
-        .textContent =
-        "Agregar producto";
+        );
 
 
-    /* ---------- ABRIR MODAL ---------- */
+    if (title) {
+
+        title.textContent =
+            "Agregar producto";
+
+    }
+
 
     openModal(
         "productModal"
@@ -855,24 +976,25 @@ function openProductModal() {
 
 
 /* =========================================================
-   16. GUARDAR PRODUCTO
+   15. GUARDAR PRODUCTO
 ========================================================= */
 
-document
-    .getElementById(
+const productForm =
+    document.getElementById(
         "productForm"
-    )
-    .addEventListener(
+    );
+
+
+if (productForm) {
+
+    productForm.addEventListener(
         "submit",
-        function(event) {
-
-
-            /* EVITAR RECARGAR LA PÁGINA */
+        async function(event) {
 
             event.preventDefault();
 
 
-            /* ---------- OBTENER DATOS ---------- */
+            /* ---------- DATOS ---------- */
 
             const id =
                 document
@@ -929,12 +1051,33 @@ document
                 );
 
 
+            /* ---------- VALIDAR ---------- */
+
+            if (!name) {
+
+                alert(
+                    "Escribe el nombre del producto."
+                );
+
+                return;
+            }
+
+
+            if (!category) {
+
+                alert(
+                    "Selecciona una categoría."
+                );
+
+                return;
+            }
+
+
             /* =================================================
-               17. EDITAR PRODUCTO EXISTENTE
+               EDITAR
             ================================================= */
 
             if (id) {
-
 
                 const product =
                     findProduct(id);
@@ -963,11 +1106,10 @@ document
 
 
             /* =================================================
-               18. CREAR PRODUCTO NUEVO
+               CREAR
             ================================================= */
 
             else {
-
 
                 const newProduct = {
 
@@ -1001,7 +1143,13 @@ document
 
             /* ---------- GUARDAR ---------- */
 
-            saveData();
+            const saved =
+                await saveData();
+
+
+            if (!saved) {
+                return;
+            }
 
 
             /* ---------- ACTUALIZAR ---------- */
@@ -1018,9 +1166,11 @@ document
         }
     );
 
+}
+
 
 /* =========================================================
-   19. EDITAR PRODUCTO
+   16. EDITAR PRODUCTO
 ========================================================= */
 
 function editProduct(id) {
@@ -1031,13 +1181,9 @@ function editProduct(id) {
 
 
     if (!product) {
-
         return;
-
     }
 
-
-    /* ---------- CARGAR DATOS EN FORMULARIO ---------- */
 
     document
         .getElementById(
@@ -1087,8 +1233,6 @@ function editProduct(id) {
         product.price;
 
 
-    /* ---------- CAMBIAR TÍTULO ---------- */
-
     document
         .getElementById(
             "productModalTitle"
@@ -1096,8 +1240,6 @@ function editProduct(id) {
         .textContent =
         "Editar producto";
 
-
-    /* ---------- ABRIR MODAL ---------- */
 
     openModal(
         "productModal"
@@ -1107,10 +1249,10 @@ function editProduct(id) {
 
 
 /* =========================================================
-   20. ELIMINAR PRODUCTO
+   17. ELIMINAR PRODUCTO
 ========================================================= */
 
-function deleteProduct(id) {
+async function deleteProduct(id) {
 
 
     const product =
@@ -1118,13 +1260,9 @@ function deleteProduct(id) {
 
 
     if (!product) {
-
         return;
-
     }
 
-
-    /* ---------- CONFIRMAR ---------- */
 
     const confirmDelete =
         confirm(
@@ -1133,13 +1271,39 @@ function deleteProduct(id) {
 
 
     if (!confirmDelete) {
-
         return;
-
     }
 
 
-    /* ---------- ELIMINAR ---------- */
+    /* ---------- ELIMINAR DE SUPABASE ---------- */
+
+    const {
+        error
+    } = await supabaseClient
+        .from("products")
+        .delete()
+        .eq(
+            "id",
+            Number(id)
+        );
+
+
+    if (error) {
+
+        console.error(
+            "Error eliminando producto:",
+            error
+        );
+
+        alert(
+            "No se pudo eliminar el producto."
+        );
+
+        return;
+    }
+
+
+    /* ---------- ELIMINAR DE MEMORIA ---------- */
 
     data.products =
         data.products.filter(
@@ -1147,11 +1311,6 @@ function deleteProduct(id) {
                 product.id !==
                 Number(id)
         );
-
-
-    /* ---------- GUARDAR ---------- */
-
-    saveData();
 
 
     /* ---------- ACTUALIZAR ---------- */
@@ -1162,22 +1321,22 @@ function deleteProduct(id) {
 
 
 /* =========================================================
-   21. ABRIR ENTRADA / SALIDA
+   18. ABRIR ENTRADA / SALIDA
 ========================================================= */
 
 function openMovementModal(type) {
 
 
-    /* ---------- LIMPIAR FORMULARIO ---------- */
-
-    document
-        .getElementById(
+    const form =
+        document.getElementById(
             "movementForm"
-        )
-        .reset();
+        );
 
 
-    /* ---------- GUARDAR TIPO ---------- */
+    if (form) {
+        form.reset();
+    }
+
 
     document
         .getElementById(
@@ -1187,37 +1346,33 @@ function openMovementModal(type) {
         type;
 
 
-    /* ---------- TÍTULO ---------- */
+    const title =
+        document.getElementById(
+            "movementTitle"
+        );
 
-    if (type === "entry") {
 
-        document
-            .getElementById(
-                "movementTitle"
-            )
-            .textContent =
-            "➕ Entrada de inventario";
+    if (title) {
+
+        if (type === "entry") {
+
+            title.textContent =
+                "➕ Entrada de inventario";
+
+        }
+
+        else {
+
+            title.textContent =
+                "➖ Salida de inventario";
+
+        }
 
     }
 
-    else {
-
-        document
-            .getElementById(
-                "movementTitle"
-            )
-            .textContent =
-            "➖ Salida de inventario";
-
-    }
-
-
-    /* ---------- CARGAR PRODUCTOS ---------- */
 
     populateMovementProducts();
 
-
-    /* ---------- ABRIR ---------- */
 
     openModal(
         "movementModal"
@@ -1227,20 +1382,22 @@ function openMovementModal(type) {
 
 
 /* =========================================================
-   22. CARGAR PRODUCTOS EN ENTRADA / SALIDA
+   19. PRODUCTOS EN MOVIMIENTOS
 ========================================================= */
 
 function populateMovementProducts() {
 
 
     const select =
-        document
-            .getElementById(
-                "movementProduct"
-            );
+        document.getElementById(
+            "movementProduct"
+        );
 
 
-    /* ---------- OPCIÓN INICIAL ---------- */
+    if (!select) {
+        return;
+    }
+
 
     select.innerHTML = `
 
@@ -1252,8 +1409,6 @@ function populateMovementProducts() {
 
     `;
 
-
-    /* ---------- AGREGAR PRODUCTOS ---------- */
 
     data.products.forEach(
         product => {
@@ -1281,24 +1436,23 @@ function populateMovementProducts() {
 
 
 /* =========================================================
-   23. GUARDAR ENTRADA / SALIDA
+   20. GUARDAR ENTRADA / SALIDA
 ========================================================= */
 
-document
-    .getElementById(
+const movementForm =
+    document.getElementById(
         "movementForm"
-    )
-    .addEventListener(
+    );
+
+
+if (movementForm) {
+
+    movementForm.addEventListener(
         "submit",
-        function(event) {
-
-
-            /* EVITAR RECARGAR */
+        async function(event) {
 
             event.preventDefault();
 
-
-            /* ---------- OBTENER TIPO ---------- */
 
             const type =
                 document
@@ -1307,8 +1461,6 @@ document
                     )
                     .value;
 
-
-            /* ---------- PRODUCTO ---------- */
 
             const productId =
                 Number(
@@ -1320,8 +1472,6 @@ document
                 );
 
 
-            /* ---------- CANTIDAD ---------- */
-
             const quantity =
                 Number(
                     document
@@ -1332,8 +1482,6 @@ document
                 );
 
 
-            /* ---------- MOTIVO ---------- */
-
             const reason =
                 document
                     .getElementById(
@@ -1342,8 +1490,6 @@ document
                     .value
                     .trim();
 
-
-            /* ---------- BUSCAR PRODUCTO ---------- */
 
             const product =
                 findProduct(
@@ -1360,7 +1506,6 @@ document
                 );
 
                 return;
-
             }
 
 
@@ -1376,12 +1521,11 @@ document
                 );
 
                 return;
-
             }
 
 
             /* =================================================
-               24. ENTRADA DE INVENTARIO
+               ENTRADA
             ================================================= */
 
             if (
@@ -1395,13 +1539,10 @@ document
 
 
             /* =================================================
-               25. SALIDA DE INVENTARIO
+               SALIDA
             ================================================= */
 
             else {
-
-
-                /* ---------- REVISAR STOCK ---------- */
 
                 if (
                     quantity >
@@ -1413,11 +1554,8 @@ document
                     );
 
                     return;
-
                 }
 
-
-                /* ---------- RESTAR STOCK ---------- */
 
                 product.stock -=
                     quantity;
@@ -1426,10 +1564,10 @@ document
 
 
             /* =================================================
-               26. GUARDAR MOVIMIENTO
+               CREAR MOVIMIENTO
             ================================================= */
 
-            data.movements.push({
+            const newMovement = {
 
                 id:
                     Date.now(),
@@ -1444,34 +1582,69 @@ document
                     quantity,
 
                 reason:
-                    reason
-                    ||
+                    reason ||
                     (
                         type === "entry"
-                        ?
-                        "Entrada de inventario"
-                        :
-                        "Salida de inventario"
+                            ? "Entrada de inventario"
+                            : "Salida de inventario"
                     ),
 
                 date:
                     new Date()
-                    .toISOString()
+                        .toISOString()
 
-            });
-
-
-            /* ---------- GUARDAR DATOS ---------- */
-
-            saveData();
+            };
 
 
-            /* ---------- ACTUALIZAR PANTALLA ---------- */
+            data.movements.push(
+                newMovement
+            );
+
+
+            /* ---------- GUARDAR ---------- */
+
+            const saved =
+                await saveData();
+
+
+            if (!saved) {
+
+                /* Si falla, deshacemos el cambio */
+
+                if (
+                    type === "entry"
+                ) {
+
+                    product.stock -=
+                        quantity;
+
+                }
+
+                else {
+
+                    product.stock +=
+                        quantity;
+
+                }
+
+
+                data.movements =
+                    data.movements.filter(
+                        movement =>
+                            movement.id !==
+                            newMovement.id
+                    );
+
+                return;
+            }
+
+
+            /* ---------- ACTUALIZAR ---------- */
 
             render();
 
 
-            /* ---------- CERRAR MODAL ---------- */
+            /* ---------- CERRAR ---------- */
 
             closeModal(
                 "movementModal"
@@ -1480,81 +1653,107 @@ document
         }
     );
 
+}
+
 
 /* =========================================================
-   27. NAVEGACIÓN
+   21. NAVEGACIÓN
 ========================================================= */
 
 function show(section) {
 
-    /* ---------- PRODUCTOS ---------- */
 
-    if (section === "products") {
-
-        const element =
-            document.getElementById("productsSection");
-
-        if (element) {
-            element.scrollIntoView();
-        }
-
-        return;
-    }
-
-
-    /* ---------- STOCK BAJO ---------- */
-
-    if (section === "low") {
+    if (
+        section === "products"
+    ) {
 
         const element =
-            document.getElementById("lowSection");
+            document.getElementById(
+                "productsSection"
+            );
+
 
         if (element) {
+
             element.scrollIntoView();
+
         }
+
 
         return;
     }
 
 
-    /* ---------- HISTORIAL ---------- */
-
-    if (section === "history") {
+    if (
+        section === "low"
+    ) {
 
         const element =
-            document.getElementById("historySection");
+            document.getElementById(
+                "lowSection"
+            );
+
 
         if (element) {
+
             element.scrollIntoView();
+
         }
 
-        return;
-    }
-
-
-    /* ---------- ENTRADA ---------- */
-
-    if (section === "entry") {
-
-        openMovementModal("entry");
 
         return;
     }
 
 
-    /* ---------- SALIDA ---------- */
+    if (
+        section === "history"
+    ) {
 
-    if (section === "exit") {
+        const element =
+            document.getElementById(
+                "historySection"
+            );
 
-        openMovementModal("exit");
+
+        if (element) {
+
+            element.scrollIntoView();
+
+        }
+
+
+        return;
+    }
+
+
+    if (
+        section === "entry"
+    ) {
+
+        openMovementModal(
+            "entry"
+        );
+
+        return;
+    }
+
+
+    if (
+        section === "exit"
+    ) {
+
+        openMovementModal(
+            "exit"
+        );
 
         return;
     }
 
 }
 
+
 /* =========================================================
-   28. CERRAR MODAL AL HACER CLIC AFUERA
+   22. CERRAR MODAL AL HACER CLIC AFUERA
 ========================================================= */
 
 document
@@ -1565,7 +1764,6 @@ document
             modal.addEventListener(
                 "click",
                 function(event) {
-
 
                     if (
                         event.target ===
@@ -1588,12 +1786,10 @@ document
 
 
 /* =========================================================
-   29. INICIAR APLICACIÓN
+   23. INICIAR APLICACIÓN
 ========================================================= */
 
 loadData();
-
-render();
 
 
 /* =========================================================
