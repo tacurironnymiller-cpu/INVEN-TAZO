@@ -1,0 +1,1129 @@
+/* =========================================================
+   LATA-ZO
+   SISTEMA DE CONTROL DE INVENTARIO
+
+   ARCHIVO: stilo.css
+
+   Aquí se modifica TODO lo relacionado con:
+   - Colores
+   - Tamaños
+   - Botones
+   - Tarjetas
+   - Diseño
+   - Celular
+========================================================= */
+
+
+/* =========================================================
+   1. VARIABLES Y COLORES
+========================================================= */
+
+:root {
+
+    --cream: #fff8df;
+
+    --white: #ffffff;
+
+    --blue: #43a5e8;
+    --blueDark: #217dcc;
+
+    --orange: #ff7047;
+
+    --red: #ef5350;
+
+    --purple: #7c20a7;
+
+    --green: #48a868;
+
+    --brown: #5b4039;
+
+    --text: #332824;
+
+    --line: #eadfc9;
+
+    --shadow:
+        0 8px 24px rgba(77,55,38,.10);
+}
+
+
+/* =========================================================
+   2. CONFIGURACIÓN GENERAL
+========================================================= */
+
+* {
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: var(--cream);
+
+    color: var(--text);
+
+    min-height: 100vh;
+
+    padding-bottom: 90px;
+
+}
+
+
+button,
+input,
+select {
+
+    font-family: inherit;
+
+}
+
+
+/* =========================================================
+   3. ENCABEZADO
+========================================================= */
+
+.header {
+
+    background: var(--white);
+
+    padding: 18px 6%;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    box-shadow: var(--shadow);
+
+}
+
+
+.logo {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.logo span {
+
+    font-size: 26px;
+
+    font-weight: 900;
+
+    color: var(--blueDark);
+
+}
+
+
+.logo small {
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    color: var(--brown);
+
+}
+
+
+.header-icon {
+
+    background: var(--blue);
+
+    color: white;
+
+    width: 45px;
+
+    height: 45px;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 23px;
+
+}
+
+
+/* =========================================================
+   4. CONTENEDOR PRINCIPAL
+========================================================= */
+
+.container {
+
+    width: 92%;
+
+    max-width: 1100px;
+
+    margin: 25px auto;
+
+}
+
+
+/* =========================================================
+   5. PANEL DE BIENVENIDA
+========================================================= */
+
+.welcome {
+
+    background: var(--white);
+
+    border-radius: 25px;
+
+    padding: 25px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    box-shadow: var(--shadow);
+
+    margin-bottom: 20px;
+
+}
+
+
+.welcome h1 {
+
+    font-size: 28px;
+
+    margin-bottom: 6px;
+
+}
+
+
+.welcome p {
+
+    color: #776b65;
+
+}
+
+
+.welcome-icon {
+
+    font-size: 45px;
+
+}
+
+
+/* =========================================================
+   6. TARJETAS DE RESUMEN
+========================================================= */
+
+.summary-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.summary-card {
+
+    border-radius: 20px;
+
+    padding: 18px;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    box-shadow: var(--shadow);
+
+}
+
+
+.summary-card.blue {
+
+    background: var(--blue);
+
+}
+
+
+.summary-card.orange {
+
+    background: var(--orange);
+
+}
+
+
+.summary-card.red {
+
+    background: var(--red);
+
+}
+
+
+.summary-card.purple {
+
+    background: var(--purple);
+
+}
+
+
+.summary-icon {
+
+    font-size: 28px;
+
+}
+
+
+.summary-card small {
+
+    display: block;
+
+    font-size: 10px;
+
+    font-weight: bold;
+
+    opacity: .9;
+
+}
+
+
+.summary-card strong {
+
+    font-size: 22px;
+
+    display: block;
+
+    margin-top: 3px;
+
+}
+
+
+/* =========================================================
+   7. BOTONES DE ACCIONES
+========================================================= */
+
+.quick-actions {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.action-button {
+
+    border: none;
+
+    border-radius: 20px;
+
+    padding: 18px 10px;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    font-size: 16px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 7px;
+
+    transition: .2s;
+
+}
+
+
+.action-button:hover {
+
+    transform: translateY(-3px);
+
+}
+
+
+.blue-button {
+
+    background: var(--blue);
+
+}
+
+
+.orange-button {
+
+    background: var(--orange);
+
+}
+
+
+.red-button {
+
+    background: var(--red);
+
+}
+
+
+.purple-button {
+
+    background: var(--purple);
+
+}
+
+
+/* =========================================================
+   8. TARJETAS DE SECCIÓN
+========================================================= */
+
+.section-card {
+
+    background: var(--white);
+
+    border-radius: 25px;
+
+    padding: 25px;
+
+    box-shadow: var(--shadow);
+
+    margin-bottom: 25px;
+
+}
+
+
+.section-title {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.section-title h2 {
+
+    font-size: 22px;
+
+}
+
+
+.section-title p {
+
+    color: #887b73;
+
+    margin-top: 4px;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   9. BOTÓN AGREGAR
+========================================================= */
+
+.add-button {
+
+    border: none;
+
+    background: var(--blue);
+
+    color: white;
+
+    padding: 12px 18px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+}
+
+
+.add-button:hover {
+
+    background: var(--blueDark);
+
+}
+
+
+/* =========================================================
+   10. BUSCADOR Y FILTROS
+========================================================= */
+
+.filters {
+
+    display: grid;
+
+    grid-template-columns: 2fr 1fr;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.filters input,
+.filters select {
+
+    border: 2px solid var(--line);
+
+    padding: 13px;
+
+    border-radius: 12px;
+
+    outline: none;
+
+    background: white;
+
+}
+
+
+.filters input:focus,
+.filters select:focus {
+
+    border-color: var(--blue);
+
+}
+
+
+/* =========================================================
+   11. TARJETAS DE PRODUCTOS
+========================================================= */
+
+.products-list {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 15px;
+
+}
+
+
+.product-card {
+
+    border: 2px solid var(--line);
+
+    border-radius: 18px;
+
+    padding: 18px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+}
+
+
+.product-info h3 {
+
+    margin-bottom: 5px;
+
+}
+
+
+.product-category {
+
+    font-size: 12px;
+
+    color: #8a7a70;
+
+    margin-bottom: 12px;
+
+}
+
+
+.product-stock {
+
+    font-weight: bold;
+
+}
+
+
+.product-price {
+
+    margin-top: 5px;
+
+    color: var(--green);
+
+    font-weight: bold;
+
+}
+
+
+/* =========================================================
+   12. BOTONES DEL PRODUCTO
+========================================================= */
+
+.product-actions {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+}
+
+
+.small-button {
+
+    border: none;
+
+    padding: 8px 10px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+}
+
+
+.edit-button {
+
+    background: #e4f3ff;
+
+    color: var(--blueDark);
+
+}
+
+
+.delete-button {
+
+    background: #ffe5e4;
+
+    color: var(--red);
+
+}
+
+
+/* =========================================================
+   13. ESTADOS DE STOCK
+========================================================= */
+
+.stock-ok {
+
+    color: var(--green);
+
+}
+
+
+.stock-low {
+
+    color: var(--red);
+
+}
+
+
+.stock-empty {
+
+    color: #8b1e1e;
+
+    font-weight: 900;
+
+}
+
+
+/* =========================================================
+   14. STOCK BAJO
+========================================================= */
+
+.low-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+
+.low-item {
+
+    padding: 15px;
+
+    border-radius: 14px;
+
+    background: #fff1ef;
+
+    border-left: 5px solid var(--red);
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+
+.low-item strong {
+
+    color: var(--red);
+
+}
+
+
+/* =========================================================
+   15. HISTORIAL
+========================================================= */
+
+.history-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+
+.history-item {
+
+    padding: 14px;
+
+    border-radius: 14px;
+
+    background: #faf7ef;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+
+.history-entry {
+
+    color: var(--green);
+
+    font-weight: bold;
+
+}
+
+
+.history-exit {
+
+    color: var(--red);
+
+    font-weight: bold;
+
+}
+
+
+.history-date {
+
+    font-size: 11px;
+
+    color: #8c817b;
+
+}
+
+
+/* =========================================================
+   16. MENÚ INFERIOR
+========================================================= */
+
+.bottom-menu {
+
+    position: fixed;
+
+    bottom: 0;
+
+    left: 0;
+
+    right: 0;
+
+    background: white;
+
+    border-top: 1px solid var(--line);
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 10px;
+
+    z-index: 100;
+
+}
+
+
+.bottom-menu button {
+
+    border: none;
+
+    background: transparent;
+
+    color: var(--brown);
+
+    padding: 8px 18px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 3px;
+
+}
+
+
+.bottom-menu button:hover {
+
+    background: #fff3d8;
+
+}
+
+
+.bottom-menu span {
+
+    font-size: 11px;
+
+}
+
+
+/* =========================================================
+   17. MODALES
+========================================================= */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0,0,0,.45);
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 200;
+
+}
+
+
+.modal.active {
+
+    display: flex;
+
+}
+
+
+.modal-content {
+
+    background: white;
+
+    width: 100%;
+
+    max-width: 500px;
+
+    border-radius: 25px;
+
+    padding: 25px;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+}
+
+
+.modal-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+.modal-header button {
+
+    border: none;
+
+    background: #f3eee5;
+
+    width: 35px;
+
+    height: 35px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================================================
+   18. FORMULARIOS
+========================================================= */
+
+form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+
+form label {
+
+    font-weight: bold;
+
+    margin-top: 5px;
+
+}
+
+
+form input,
+form select {
+
+    width: 100%;
+
+    padding: 13px;
+
+    border: 2px solid var(--line);
+
+    border-radius: 12px;
+
+    outline: none;
+
+}
+
+
+form input:focus,
+form select:focus {
+
+    border-color: var(--blue);
+
+}
+
+
+.save-button {
+
+    border: none;
+
+    background: var(--blue);
+
+    color: white;
+
+    padding: 14px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    margin-top: 12px;
+
+}
+
+
+.save-button:hover {
+
+    background: var(--blueDark);
+
+}
+
+
+/* =========================================================
+   19. MENSAJES VACÍOS
+========================================================= */
+
+.empty {
+
+    text-align: center;
+
+    padding: 25px;
+
+    color: #8a7e76;
+
+}
+
+
+/* =========================================================
+   20. DISEÑO PARA CELULAR
+========================================================= */
+
+@media (max-width: 700px) {
+
+
+    .summary-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .quick-actions {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .products-list {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .filters {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .section-title {
+
+        align-items: flex-start;
+
+    }
+
+
+}
+
+
+/* =========================================================
+   21. CELULARES PEQUEÑOS
+========================================================= */
+
+@media (max-width: 400px) {
+
+
+    .container {
+
+        width: 94%;
+
+    }
+
+
+    .summary-card {
+
+        padding: 13px;
+
+    }
+
+
+    .summary-icon {
+
+        font-size: 21px;
+
+    }
+
+
+    .summary-card strong {
+
+        font-size: 18px;
+
+    }
+
+
+    .action-button {
+
+        font-size: 13px;
+
+    }
+
+
+    .section-card {
+
+        padding: 18px;
+
+    }
+
+
+    .bottom-menu {
+
+        gap: 0;
+
+    }
+
+
+    .bottom-menu button {
+
+        padding: 8px 10px;
+
+    }
+
+}
